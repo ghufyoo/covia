@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "29102650702",
+    "project_id": "covia-d3cdc",
+    "storage_bucket": "covia-d3cdc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29102650702:android:83666a0246e6865893da1f",
+        "android_client_info": {
+          "package_name": "com.example.covia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29102650702-l9soeg7u4v8u5mgi3ivsk1gr5m037fr3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5VoUo9QSdy_Z55YRTQkYn2DbGVe7TEpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29102650702-l9soeg7u4v8u5mgi3ivsk1gr5m037fr3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
