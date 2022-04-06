@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-class Version_Screen extends StatelessWidget {
-  const Version_Screen({Key? key}) : super(key: key);
+class VersionScreen extends StatelessWidget {
+  const VersionScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('CovIA'),
+        title: const Text('CovIA'),
       ),
       body: Center(
           child: Column(
-        children: [
+        children: const [
           Text(
             'About',
             style: TextStyle(fontSize: 25),

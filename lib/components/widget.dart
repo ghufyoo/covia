@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../model/user_model.dart';
-
 class IconBtn extends StatelessWidget {
   const IconBtn({
     Key? key,
@@ -26,7 +24,7 @@ class IconBtn extends StatelessWidget {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
@@ -46,7 +44,7 @@ class IconBtn extends StatelessWidget {
           ),
           Text(
             label,
-            style: TextStyle(fontSize: 20),
+            style: const TextStyle(fontSize: 20),
           )
         ],
       ),
@@ -59,22 +57,24 @@ class RoundedButton extends StatelessWidget {
     Key? key,
     required this.label,
     this.icon,
+    this.color,
     required this.onPressed,
   }) : super(key: key);
   final String label;
   IconData? icon;
   final VoidCallback onPressed;
+  Color? color;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPressed,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: Material(
             elevation: 5.0,
-            color: Colors.blue,
+            color: color,
             borderRadius: BorderRadius.circular(30.0),
-            child: Container(
+            child: SizedBox(
               width: 200,
               height: 50,
               child: Row(
@@ -82,9 +82,9 @@ class RoundedButton extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Icon(
@@ -142,7 +142,7 @@ class InputField extends StatelessWidget {
                   children: [
                     TextSpan(
                         text: label2,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.red,
                         ))
                   ]),

@@ -11,38 +11,59 @@ import 'package:covia/screens/profile_screen.dart';
 import 'package:covia/screens/qrscanner.dart';
 import 'package:covia/screens/version_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../controller/auth_controller.dart';
 
 class Home_Screen extends StatefulWidget {
-  Home_Screen({Key? key, this.storeName, this.timeLimit, this.startTimer})
+  Home_Screen(
+      {Key? key,
+      this.storeName,
+      this.timeLimit,
+      this.startTimer,
+      this.activeuser = 0})
       : super(key: key);
   String? storeName = '';
   String? timeLimit = '';
   bool? startTimer;
+  num activeuser;
   @override
   State<Home_Screen> createState() => _Home_ScreenState();
 }
 
+num docId = 1;
+bool isReachLimit = false;
+
 class _Home_ScreenState extends State<Home_Screen> {
   TimeOfDay day = TimeOfDay.now();
-  Duration duration = Duration();
+  Duration duration = const Duration();
   Timer? timer;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     startTimer(widget.startTimer);
+
+    if (isReachLimit) {
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+        Get.defaultDialog(title: 'yy');
+      });
+    }
   }
 
   void addTime() {
-    final addSeconds = 1;
+    const addSeconds = 1;
 
     setState(() {
       final seconds = duration.inSeconds + addSeconds;
 
       duration = Duration(seconds: seconds);
+      if (duration.inMinutes > 0.5) {
+        isReachLimit = true;
+      }
     });
   }
 
@@ -52,32 +73,51 @@ class _Home_ScreenState extends State<Home_Screen> {
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     print('$hours : $minutes : $seconds');
+
     setState(() {
-      duration = Duration();
+      duration = const Duration();
       timer?.cancel();
     });
   }
 
   void startTimer(bool? start) {
     if (start == true) {
-      timer = Timer.periodic(Duration(seconds: 1), (_) => addTime());
+      timer = Timer.periodic(const Duration(seconds: 1), (_) => addTime());
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  String durationHours(String hours, String minutes, String seconds) {
+    if (hours == '00' && minutes == '00') {
+      return '$seconds seconds';
+    } else if (hours == '00') {
+      return '$minutes minutes $seconds seconds';
+    } else {
+      return '$hours hour and $minutes minutes $seconds seconds';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      widget.storeName;
-      widget.timeLimit;
-    });
+    DateTime now = DateTime.now();
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    String outTime = DateFormat.Hm().format(now);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: InkWell(
-          child: Text('CovIA'),
+          child: const Text('CovIA'),
           onTap: () {
             print(day.period);
-            Get.to(Version_Screen());
+            Get.to(const VersionScreen());
           },
         ),
         actions: [
@@ -85,16 +125,9 @@ class _Home_ScreenState extends State<Home_Screen> {
               onPressed: () {
                 AuthController.instance.logOut();
               },
-              icon: Icon(Icons.logout))
+              icon: const Icon(Icons.logout))
         ],
       ),
-      // body: StreamBuilder<DocumentSnapshot>(
-      //     stream: FirestoreController.instance.firebaseFirestore
-      //         .collection('UserInformation')
-      //         .doc(AuthController.instance.auth.currentUser!.uid)
-      //         .snapshots(),
-      //     builder: (context, snapshot) {
-
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirestoreController.instance.readUser(),
         builder: (context, snapshot) {
@@ -112,8 +145,8 @@ class _Home_ScreenState extends State<Home_Screen> {
                       day.period == DayPeriod.am
                           ? 'Good Morning ${users['nickname']}'
                           : 'Good Afternoon ${users['nickname']}',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Row(
@@ -124,7 +157,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                           color1: Colors.pink,
                           color2: Colors.pink[100]!,
                           onPressed: () {
-                            Get.to(() => Profile_Screen());
+                            Get.to(() => const Profile_Screen());
                           },
                           icon: Icons.person,
                           label: 'Profile'),
@@ -132,7 +165,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                           color1: Colors.blue,
                           color2: Colors.blue[100]!,
                           onPressed: () {
-                            Get.to(() => History_Screen());
+                            Get.to(() => const History_Screen());
                           },
                           icon: Icons.history,
                           label: 'History'),
@@ -146,7 +179,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                           color1: Colors.green,
                           color2: Colors.green[100]!,
                           onPressed: () {
-                            Get.to(() => Crowdchecker_Screen());
+                            Get.to(() => const Crowdchecker_Screen());
                           },
                           icon: Icons.groups,
                           label: 'Crowd Checker'),
@@ -154,7 +187,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                           color1: Colors.red,
                           color2: Colors.red[100]!,
                           onPressed: () {
-                            Get.to(() => Highrisk_Screen());
+                            Get.to(() => const Highrisk_Screen());
                           },
                           icon: Icons.priority_high,
                           label: 'High-risk areas'),
@@ -170,19 +203,32 @@ class _Home_ScreenState extends State<Home_Screen> {
                           color: Colors.black,
                           width: 1,
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20)),
                       ),
                       child: Center(child: buildTime()),
                     ),
                     RoundedButton(
+                      color: Colors.red,
                       label: 'Check-out',
-                      icon: Icons.arrow_forward,
-                      onPressed: () {
+                      icon: Icons.arrow_back,
+                      onPressed: () async {
+                        await FirestoreController.instance.checkOut(
+                            docId,
+                            outTime,
+                            widget.storeName.toString(),
+                            widget.activeuser,
+                            durationHours(hours, minutes, seconds),
+                            isReachLimit);
+                        // await FirestoreController.instance.firebaseFirestore
+                        //     .collection('InOut')
+                        //     .doc(docId.toString())
+                        //     .update({'outTime': day.hour, 'isOut': true});
+
                         resetTimer();
-                        setState(() {
-                          widget.storeName = null;
-                          widget.timeLimit = null;
-                        });
+
+                        widget.storeName = null;
+                        widget.timeLimit = null;
                       },
                     )
                   ] else
@@ -196,15 +242,31 @@ class _Home_ScreenState extends State<Home_Screen> {
                               color: Colors.black,
                               width: 1,
                             ),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
                           ),
-                          child: Center(child: Text('Check-In First')),
+                          child: const Center(child: Text('Check-In First')),
                         ),
                         RoundedButton(
+                          color: Colors.blue,
                           label: 'Check-in',
                           icon: Icons.arrow_forward,
-                          onPressed: () {
-                            Get.to(Qrscanner_Screen());
+                          onPressed: () async {
+                            await FirestoreController.instance.firebaseFirestore
+                                .collection('InOut')
+                                .get()
+                                .then((QuerySnapshot querySnapshot) {
+                              for (var element in querySnapshot.docs) {
+                                print(element['docId']);
+                                while (docId <= int.parse(element['docId'])) {
+                                  docId = docId + 1;
+                                  print(docId);
+                                }
+                              }
+                            });
+                            Get.to(QrscannerScreen(
+                              docId: docId,
+                            ));
                           },
                         )
                       ],
@@ -213,7 +275,7 @@ class _Home_ScreenState extends State<Home_Screen> {
               ),
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -222,12 +284,80 @@ class _Home_ScreenState extends State<Home_Screen> {
 
   Widget buildTime() {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
+
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return Text(
-      '$hours:$minutes:$seconds',
-      style: TextStyle(fontSize: 25),
-    );
+    if (duration.inMinutes > 0.5) {
+      return Text(
+        '$hours:$minutes:$seconds',
+        style: const TextStyle(fontSize: 25, color: Colors.red),
+      );
+    } else {
+      return Text(
+        '$hours:$minutes:$seconds',
+        style: const TextStyle(fontSize: 25),
+      );
+    }
+  }
+
+  // Widget _showMyDialog() {
+  //   if (duration.inMinutes > 0.5) {
+  //     return AlertDialog(
+  //       title: const Text('AlertDialog Title'),
+  //       content: SingleChildScrollView(
+  //         child: ListBody(
+  //           children: const <Widget>[
+  //             Text('This is a demo alert dialog.'),
+  //             Text('Would you like to approve of this message?'),
+  //           ],
+  //         ),
+  //       ),
+  //       actions: <Widget>[
+  //         TextButton(
+  //           child: const Text('Approve'),
+  //           onPressed: () {
+  //             Navigator.of(context).pop();
+  //           },
+  //         ),
+  //       ],
+  //     );
+  //   } else {
+  //     return Container();
+  //   }
+  // }
+
+  void _showMyDialog(bool isReachLimit) async {
+    if (!isReachLimit) {
+      print('hey');
+    } else {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          isReachLimit = false;
+
+          return AlertDialog(
+            title: const Text('AlertDialog Title'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: const <Widget>[
+                  Text('This is a demo alert dialog.'),
+                  Text('Would you like to approve of this message?'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Approve'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

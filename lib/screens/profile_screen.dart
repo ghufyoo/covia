@@ -122,7 +122,7 @@ class ProfileStream extends StatelessWidget {
                   label2: ' *',
                   hint: "Enter New Name",
                   inputType: TextInputType.name),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               InputField(
@@ -134,7 +134,7 @@ class ProfileStream extends StatelessWidget {
                   label2: '',
                   hint: 'NRIC/Passport',
                   inputType: TextInputType.number),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               InputField(
@@ -146,7 +146,7 @@ class ProfileStream extends StatelessWidget {
                   label2: ' *',
                   hint: 'Enter Your New Phone Number',
                   inputType: TextInputType.phone),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               InputField(
@@ -159,9 +159,9 @@ class ProfileStream extends StatelessWidget {
                   hint: 'Vaccination Status',
                   inputType: TextInputType.phone),
               RichText(
-                text: TextSpan(
+                text: const TextSpan(
                     text: 'Only details with ',
-                    style: const TextStyle(color: Colors.grey, fontSize: 20),
+                    style: TextStyle(color: Colors.grey, fontSize: 20),
                     children: [
                       TextSpan(
                           text: '*',
@@ -171,7 +171,7 @@ class ProfileStream extends StatelessWidget {
                       TextSpan(text: ' can be modified')
                     ]),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               RoundedButton(

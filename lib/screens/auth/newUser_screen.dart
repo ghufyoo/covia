@@ -24,13 +24,13 @@ class _Newuser_ScreenState extends State<Newuser_Screen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Welcome To Covia'),
+        title: const Text('Welcome To Covia'),
       ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               CircleAvatar(
@@ -82,7 +82,7 @@ class _Newuser_ScreenState extends State<Newuser_Screen> {
                   label2: ' *',
                   hint: "Enter your NRIC/Passport",
                   inputType: TextInputType.name),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               RoundedButton(
@@ -98,18 +98,18 @@ class _Newuser_ScreenState extends State<Newuser_Screen> {
                     await FirestoreController.instance
                         .createUser(user)
                         .then((value) {
-                      Get.to(() => Home_Screen());
+                      Get.off(() => Home_Screen());
                       Get.snackbar(
                         "Successful",
                         "",
                         snackPosition: SnackPosition.TOP,
-                        titleText: Text(
+                        titleText: const Text(
                           "Successful",
                           style: TextStyle(color: Colors.white),
                         ),
                         messageText: Text(
                           'Hi ${controllerNickname.text}',
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       );
                     });
@@ -118,13 +118,13 @@ class _Newuser_ScreenState extends State<Newuser_Screen> {
                       "About Registration",
                       "Fail to Save User Data",
                       snackPosition: SnackPosition.TOP,
-                      titleText: Text(
+                      titleText: const Text(
                         "Registration failed",
                         style: TextStyle(color: Colors.white),
                       ),
                       messageText: Text(
                         e.toString(),
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     );
                   }
