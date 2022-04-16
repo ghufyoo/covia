@@ -11,7 +11,6 @@ import 'package:covia/screens/profile_screen.dart';
 import 'package:covia/screens/qrscanner.dart';
 import 'package:covia/screens/version_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -21,14 +20,16 @@ class Home_Screen extends StatefulWidget {
   Home_Screen(
       {Key? key,
       this.storeName,
+      this.storeEmail,
       this.timeLimit,
       this.startTimer,
-      this.activeuser = 0})
+      this.activeuser})
       : super(key: key);
   String? storeName = '';
+  String? storeEmail = '';
   String? timeLimit = '';
   bool? startTimer;
-  num activeuser;
+  num? activeuser;
   @override
   State<Home_Screen> createState() => _Home_ScreenState();
 }
@@ -47,11 +48,11 @@ class _Home_ScreenState extends State<Home_Screen> {
     super.initState();
     startTimer(widget.startTimer);
 
-    if (isReachLimit) {
-      SchedulerBinding.instance?.addPostFrameCallback((_) {
-        Get.defaultDialog(title: 'yy');
-      });
-    }
+    // if (isReachLimit) {
+    //   SchedulerBinding.instance?.addPostFrameCallback((_) {
+    //     Get.defaultDialog(title: 'yy');
+    //   });
+    // }
   }
 
   void addTime() {
@@ -104,6 +105,7 @@ class _Home_ScreenState extends State<Home_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    String username = '';
     DateTime now = DateTime.now();
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
@@ -135,7 +137,7 @@ class _Home_ScreenState extends State<Home_Screen> {
             return Text('Something Went Wrong! ${snapshot.error}');
           } else if (snapshot.hasData) {
             final users = snapshot.data!;
-
+            username = users['fullname'];
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -213,11 +215,12 @@ class _Home_ScreenState extends State<Home_Screen> {
                       label: 'Check-out',
                       icon: Icons.arrow_back,
                       onPressed: () async {
+                        print('time limit: ${widget.timeLimit}');
                         await FirestoreController.instance.checkOut(
                             docId,
                             outTime,
-                            widget.storeName.toString(),
-                            widget.activeuser,
+                            widget.storeEmail.toString(),
+                            widget.activeuser as num,
                             durationHours(hours, minutes, seconds),
                             isReachLimit);
                         // await FirestoreController.instance.firebaseFirestore
@@ -266,6 +269,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                             });
                             Get.to(QrscannerScreen(
                               docId: docId,
+                              username: username,
                             ));
                           },
                         )
@@ -288,7 +292,7 @@ class _Home_ScreenState extends State<Home_Screen> {
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    if (duration.inMinutes > 0.5) {
+    if (duration.inMinutes > int.parse(widget.timeLimit.toString())) {
       return Text(
         '$hours:$minutes:$seconds',
         style: const TextStyle(fontSize: 25, color: Colors.red),
@@ -327,37 +331,37 @@ class _Home_ScreenState extends State<Home_Screen> {
   //   }
   // }
 
-  void _showMyDialog(bool isReachLimit) async {
-    if (!isReachLimit) {
-      print('hey');
-    } else {
-      return showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          isReachLimit = false;
+  // void _showMyDialog(bool isReachLimit) async {
+  //   if (!isReachLimit) {
+  //     print('hey');
+  //   } else {
+  //     return showDialog<void>(
+  //       context: context,
+  //       barrierDismissible: false, // user must tap button!
+  //       builder: (BuildContext context) {
+  //         isReachLimit = false;
 
-          return AlertDialog(
-            title: const Text('AlertDialog Title'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: const <Widget>[
-                  Text('This is a demo alert dialog.'),
-                  Text('Would you like to approve of this message?'),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Approve'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
+  //         return AlertDialog(
+  //           title: const Text('AlertDialog Title'),
+  //           content: SingleChildScrollView(
+  //             child: ListBody(
+  //               children: const <Widget>[
+  //                 Text('This is a demo alert dialog.'),
+  //                 Text('Would you like to approve of this message?'),
+  //               ],
+  //             ),
+  //           ),
+  //           actions: <Widget>[
+  //             TextButton(
+  //               child: const Text('Approve'),
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
 }

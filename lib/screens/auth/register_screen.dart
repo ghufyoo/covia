@@ -1,8 +1,6 @@
 import 'package:covia/components/widget.dart';
 import 'package:covia/controller/auth_controller.dart';
 import 'package:covia/screens/auth/login_screen.dart';
-import 'package:covia/screens/auth/mysejahtera_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -78,9 +76,8 @@ class _Registration_ScreenState extends State<Registration_Screen> {
               SizedBox(
                 height: 5,
               ),
-              RoundedButton(
+              NoIconButton(
                   label: 'Register',
-                  icon: Icons.login,
                   onPressed: () {
                     AuthController.instance.register(
                         emailController.text.trim(),

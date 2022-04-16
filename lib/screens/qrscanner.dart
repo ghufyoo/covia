@@ -1,12 +1,16 @@
 import 'dart:io';
 import 'package:covia/controller/firestore_controller.dart';
+import 'package:covia/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QrscannerScreen extends StatefulWidget {
-  const QrscannerScreen({Key? key, required this.docId}) : super(key: key);
+  const QrscannerScreen({Key? key, required this.docId, required this.username})
+      : super(key: key);
   final num docId;
+  final String username;
   @override
   State<QrscannerScreen> createState() => _QrscannerScreenState();
 }
@@ -62,6 +66,12 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Qr Scanner'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Get.off(() => Home_Screen());
+            },
+          ),
         ),
         body: Stack(
           alignment: Alignment.center,
@@ -112,23 +122,29 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
             cutOutSize: MediaQuery.of(context).size.width * 0.8),
       );
   void onQRViewCreated(QRViewController controller) async {
-    String formattedTime = DateFormat.Hm().format(now);
-
     setState(() {
       this.controller = controller;
       print(FirestoreController.instance.firebaseFirestore
           .collection('StoreInformation'));
     });
     controller.scannedDataStream.listen((barcode) async {
+      String formattedTime = DateFormat.Hm().format(now);
+      String formattedDate = DateFormat('dd-MMMM-yyyy').format(now);
       this.barcode = barcode;
       FirestoreController.instance.checkIn(
-          barcode.code.toString(), widget.docId.toString(), formattedTime);
-
+          barcode.code.toString(),
+          widget.docId.toString(),
+          formattedTime,
+          formattedDate,
+          widget.username);
+      //  dispose();
       // if (barcode.code == c) {
+      //   print(now);
       //   final session = InOut(
       //       docId: widget.docId.toString(),
       //       email: AuthController.instance.auth.currentUser!.email.toString(),
       //       inTime: formattedTime,
+      //       date: formattedDate,
       //       isOut: false,
       //       duration: '',
       //       isReachedLimit: false,
@@ -152,7 +168,6 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
       //   //     .add({'storename': c, 'inTime': now.hour + now.minute});
 
       // }
-      // getData();
     });
   }
 }

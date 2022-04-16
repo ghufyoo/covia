@@ -1,7 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:covia/main.dart';
-import 'package:covia/screens/profile_screen.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,13 +49,13 @@ class AuthController extends GetxController {
       Get.snackbar(
         "About User",
         "User message",
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         titleText: Text(
-          "Account creation failed",
+          "Registration Failed",
           style: TextStyle(color: Colors.white),
         ),
         messageText: Text(
-          e.toString(),
+          'Please Try Again',
           style: TextStyle(color: Colors.white),
         ),
       );
@@ -80,7 +76,7 @@ class AuthController extends GetxController {
           style: TextStyle(color: Colors.white),
         ),
         messageText: Text(
-          e.toString(),
+          'Please make sure your password and email are right',
           style: TextStyle(color: Colors.white),
         ),
       );

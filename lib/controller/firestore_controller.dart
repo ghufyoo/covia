@@ -10,6 +10,14 @@ class FirestoreController extends GetxController {
   static FirestoreController instance = Get.find();
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
+  //search function
+  Future queryData(String queryString) async {
+    return FirebaseFirestore.instance
+        .collection('StoreInformation')
+        .where('storename', isGreaterThanOrEqualTo: queryString)
+        .get();
+  }
+
   Future createUser(User user) async {
     final docUser = firebaseFirestore
         .collection('UserInformation')
@@ -39,7 +47,6 @@ class FirestoreController extends GetxController {
 
   Stream<DocumentSnapshot> readUser() => firebaseFirestore
       .collection('UserInformation')
-      
       .doc(AuthController.instance.auth.currentUser?.uid)
       .snapshots();
 
@@ -63,67 +70,69 @@ class FirestoreController extends GetxController {
 
   //StoreInformation
 
-  storeInformation(String store) async {
+  storeInformation(String storeemail, String store, String timeLimit) async {
     num activeuser = 0;
     num totaluser = 0;
-    await FirestoreController.instance.firebaseFirestore
-        .collection('StoreInformation')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      for (var element in querySnapshot.docs) {
-        print(element['activeuser']);
-        while (activeuser <= element['activeuser']) {
-          activeuser = activeuser + 1;
-          print(activeuser);
-        }
-      }
-      firebaseFirestore
+    try {
+      activeuser = activeuser + 1;
+      await FirestoreController.instance.firebaseFirestore
           .collection('StoreInformation')
-          .doc(store)
-          .update({'activeuser': activeuser});
-
-      Get.off(() => Home_Screen(
+          .doc(storeemail)
+          .update({'activeuser': activeuser}).then((value) {
+        Get.off(
+          () => Home_Screen(
             storeName: store,
-            timeLimit: '1 hour',
+            storeEmail: storeemail,
+            timeLimit: timeLimit,
             startTimer: true,
             activeuser: 1,
-          ));
-      // for (var element in querySnapshot.docs) {
-      //   activeuser = element['activeuser'];
-      //   activeuser++;
-      //   if (activeuser > element['activeuser']) {
+          ),
+        );
+      });
 
-      //   }
-      // }
-    });
-    totaluser = activeuser;
+      totaluser = activeuser;
+    } catch (e) {
+      Get.snackbar('$e', 'message');
+    }
   }
 
-  checkIn(String code, String docId, String inTime) async {
-    String store = '';
+  checkIn(String code, String docId, String inTime, String date,
+      String username) async {
+    String store = code;
+    String riskstatus = '';
+    String storeemail = '';
+    String timeLimit = '';
     await FirestoreController.instance.firebaseFirestore
         .collection('StoreInformation')
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var element in querySnapshot.docs) {
-        print(element['storename']);
-        store = element['storename'];
-      }
-      if (code == store) {
-        // Get.defaultDialog(title: 'yyy');
-        final session = InOut(
-            docId: docId,
-            email: AuthController.instance.auth.currentUser!.email.toString(),
-            inTime: '',
-            isOut: false,
-            duration: '',
-            isReachedLimit: false,
-            outTime: '',
-            storename: store);
-        FirestoreController.instance.createSession(session).then((value) {
-          print('calleddd');
-          storeInformation(store);
-        });
+        // print(element['storename']);
+        //store = element['storename'];
+        storeemail = element['email'];
+        riskstatus = element['riskstatus'];
+        timeLimit = element['durationHours'].toString() +
+            element['durationMinutes'].toString() +
+            element['durationSeconds'].toString();
+        if (code == element['storename']) {
+          //TODO: test qr code and find solution for time limit
+          final session = InOut(
+              docId: docId,
+              email: AuthController.instance.auth.currentUser!.email.toString(),
+              inTime: inTime,
+              date: date,
+              isOut: false,
+              duration: '',
+              isReachedLimit: false,
+              outTime: '',
+              storename: store,
+              riskstatus: riskstatus,
+              username: username);
+          FirestoreController.instance.createSession(session).then((value) {
+            print('called');
+            storeInformation(storeemail, store, timeLimit);
+          });
+        }
       }
     });
     return store;

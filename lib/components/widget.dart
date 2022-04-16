@@ -99,6 +99,40 @@ class RoundedButton extends StatelessWidget {
   }
 }
 
+class NoIconButton extends StatelessWidget {
+  NoIconButton({
+    Key? key,
+    required this.label,
+    required this.onPressed,
+  }) : super(key: key);
+  final String label;
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        child: Material(
+            elevation: 5.0,
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(30.0),
+            child: SizedBox(
+                width: 200,
+                height: 50,
+                child: Center(
+                  child: Text(
+                    label,
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ))),
+      ),
+    );
+  }
+}
+
 class InputField extends StatelessWidget {
   InputField(
       {Key? key,

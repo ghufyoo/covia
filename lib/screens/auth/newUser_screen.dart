@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:covia/components/widget.dart';
-import 'package:covia/controller/auth_controller.dart';
 import 'package:covia/controller/firestore_controller.dart';
 import 'package:covia/model/user_model.dart';
 import 'package:covia/screens/home_screen.dart';
@@ -81,11 +79,12 @@ class _Newuser_ScreenState extends State<Newuser_Screen> {
                   label1: "Enter your NRIC/Passport",
                   label2: ' *',
                   hint: "Enter your NRIC/Passport",
-                  inputType: TextInputType.name),
+                  inputType: TextInputType.number),
               const SizedBox(
                 height: 10,
               ),
               RoundedButton(
+                color: Colors.blueAccent,
                 label: 'Register',
                 onPressed: () async {
                   try {

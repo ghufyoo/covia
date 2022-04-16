@@ -1,13 +1,11 @@
 import 'package:covia/components/widget.dart';
 import 'package:covia/screens/auth/mysejahtera_screen.dart';
 import 'package:covia/screens/auth/register_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controller/auth_controller.dart';
-import '../home_screen.dart';
 
 class Login_Screen extends StatefulWidget {
   const Login_Screen({Key? key}) : super(key: key);
@@ -35,7 +33,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     color: Colors.blue,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: const [
                         Text(
                           'CovIA',
                           style: TextStyle(color: Colors.white, fontSize: 70),
@@ -47,7 +45,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       ],
                     ),
                   ),
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(top: 40, bottom: 20),
                     child: Text(
                       'LOGIN',
@@ -64,7 +62,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     inputType: TextInputType.emailAddress,
                     read: false,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                   InputField(
@@ -77,12 +75,11 @@ class _Login_ScreenState extends State<Login_Screen> {
                     inputType: TextInputType.text,
                     read: false,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
-                  RoundedButton(
+                  NoIconButton(
                       label: 'Login',
-                      icon: Icons.login,
                       onPressed: () {
                         AuthController.instance.login(
                             emailController.text.trim(),
@@ -91,17 +88,18 @@ class _Login_ScreenState extends State<Login_Screen> {
                   RichText(
                     text: TextSpan(
                         text: 'New?',
-                        style: TextStyle(color: Colors.black, fontSize: 18),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         children: <TextSpan>[
                           TextSpan(
                               text: ' Register First',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.blueAccent, fontSize: 18),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Get.to(() => Registration_Screen());
+                                  Get.to(() => const Registration_Screen());
                                 }),
-                          TextSpan(
+                          const TextSpan(
                             text: ' Or Sync With MySejahtera',
                             style: TextStyle(color: Colors.black, fontSize: 18),
                           ),
@@ -111,7 +109,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     onTap: () {
                       Get.to(Mysejahtera_Screen());
                     },
-                    child: Container(
+                    child: SizedBox(
                       width: 100,
                       height: 100,
                       child: Image.asset('assets/MySejahtera_logo.png'),
