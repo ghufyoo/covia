@@ -21,13 +21,20 @@ class Home_Screen extends StatefulWidget {
       {Key? key,
       this.storeName,
       this.storeEmail,
-      this.timeLimit,
+      this.docId,
+      this.timeLimitHours,
+      this.timeLimitMinutes,
+      this.timeLimitSeconds,
       this.startTimer,
       this.activeuser})
       : super(key: key);
   String? storeName = '';
   String? storeEmail = '';
-  String? timeLimit = '';
+  String? docId = '';
+  num? timeLimitHours = 0;
+  num? timeLimitMinutes = 0;
+  num? timeLimitSeconds = 0;
+
   bool? startTimer;
   num? activeuser;
   @override
@@ -41,13 +48,21 @@ class _Home_ScreenState extends State<Home_Screen> {
   TimeOfDay day = TimeOfDay.now();
   Duration duration = const Duration();
   Timer? timer;
+  bool isExceeded = false;
+  void fetchData() async {
+    var data = await FirebaseFirestore.instance
+        .collection("InOut")
+        .doc(widget.docId)
+        .get();
+    isExceeded = data['isReachedLimit'];
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     startTimer(widget.startTimer);
-
+    fetchData();
     // if (isReachLimit) {
     //   SchedulerBinding.instance?.addPostFrameCallback((_) {
     //     Get.defaultDialog(title: 'yy');
@@ -62,9 +77,6 @@ class _Home_ScreenState extends State<Home_Screen> {
       final seconds = duration.inSeconds + addSeconds;
 
       duration = Duration(seconds: seconds);
-      if (duration.inMinutes > 0.5) {
-        isReachLimit = true;
-      }
     });
   }
 
@@ -106,6 +118,7 @@ class _Home_ScreenState extends State<Home_Screen> {
   @override
   Widget build(BuildContext context) {
     String username = '';
+    bool uservaccinestatus = false;
     DateTime now = DateTime.now();
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
@@ -138,6 +151,7 @@ class _Home_ScreenState extends State<Home_Screen> {
           } else if (snapshot.hasData) {
             final users = snapshot.data!;
             username = users['fullname'];
+            uservaccinestatus = users['isVaccine'];
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -195,7 +209,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                           label: 'High-risk areas'),
                     ],
                   ),
-                  if (widget.storeName != null && widget.timeLimit != null) ...[
+                  if (widget.storeName != null) ...[
                     Text('You are now at ${widget.storeName}'),
                     Container(
                       width: 200,
@@ -215,7 +229,6 @@ class _Home_ScreenState extends State<Home_Screen> {
                       label: 'Check-out',
                       icon: Icons.arrow_back,
                       onPressed: () async {
-                        print('time limit: ${widget.timeLimit}');
                         await FirestoreController.instance.checkOut(
                             docId,
                             outTime,
@@ -231,7 +244,6 @@ class _Home_ScreenState extends State<Home_Screen> {
                         resetTimer();
 
                         widget.storeName = null;
-                        widget.timeLimit = null;
                       },
                     )
                   ] else
@@ -255,6 +267,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                           label: 'Check-in',
                           icon: Icons.arrow_forward,
                           onPressed: () async {
+                            
                             await FirestoreController.instance.firebaseFirestore
                                 .collection('InOut')
                                 .get()
@@ -267,9 +280,11 @@ class _Home_ScreenState extends State<Home_Screen> {
                                 }
                               }
                             });
+                            fetchData();
                             Get.to(QrscannerScreen(
                               docId: docId,
                               username: username,
+                              uservaccinestatus: uservaccinestatus,
                             ));
                           },
                         )
@@ -292,7 +307,10 @@ class _Home_ScreenState extends State<Home_Screen> {
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    if (duration.inMinutes > int.parse(widget.timeLimit.toString())) {
+    if ((duration.inHours >= widget.timeLimitHours!.toInt()) &&
+        (duration.inMinutes >= widget.timeLimitMinutes!.toInt()) &&
+        (duration.inSeconds >= widget.timeLimitSeconds!.toInt())) {
+      //isExceeded = true;
       return Text(
         '$hours:$minutes:$seconds',
         style: const TextStyle(fontSize: 25, color: Colors.red),

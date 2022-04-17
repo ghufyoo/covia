@@ -7,10 +7,11 @@ import 'package:intl/intl.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QrscannerScreen extends StatefulWidget {
-  const QrscannerScreen({Key? key, required this.docId, required this.username})
+  const QrscannerScreen({Key? key, required this.docId, required this.username, required this.uservaccinestatus})
       : super(key: key);
   final num docId;
   final String username;
+  final bool uservaccinestatus;
   @override
   State<QrscannerScreen> createState() => _QrscannerScreenState();
 }
@@ -136,7 +137,9 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
           widget.docId.toString(),
           formattedTime,
           formattedDate,
-          widget.username);
+          widget.username,
+          widget.uservaccinestatus
+          );
       //  dispose();
       // if (barcode.code == c) {
       //   print(now);

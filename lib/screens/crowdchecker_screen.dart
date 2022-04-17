@@ -34,6 +34,7 @@ class _Crowdchecker_ScreenState extends State<Crowdchecker_Screen> {
                       width: 300,
                       height: 100,
                       child: TextField(
+                        textCapitalization: TextCapitalization.characters,
                         style: const TextStyle(color: Colors.black),
                         decoration: const InputDecoration(
                             hintText: 'Search Courses',
@@ -73,6 +74,20 @@ class _Crowdchecker_ScreenState extends State<Crowdchecker_Screen> {
   }
 
   Widget searchedData() {
+    Color color(String riskstatus) {
+      Color col;
+      if (riskstatus == 'Low Risk') {
+        col = Colors.green;
+        return col;
+      } else if (riskstatus == 'Medium Risk') {
+        col = Colors.yellow.shade700;
+        return col;
+      } else {
+        col = Colors.red;
+        return col;
+      }
+    }
+
     return SizedBox(
       height: 300,
       child: ListView.builder(
@@ -81,7 +96,9 @@ class _Crowdchecker_ScreenState extends State<Crowdchecker_Screen> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListTile(
-              tileColor: Colors.green,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0)),
+              tileColor: color(snapshotData.docs[index]['riskstatus']),
               title: Text(
                 snapshotData.docs[index]['storename'],
                 textAlign: TextAlign.center,

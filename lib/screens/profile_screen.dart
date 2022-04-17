@@ -94,8 +94,9 @@ class ProfileStream extends StatelessWidget {
         final data = snapshot.data;
 
         var NRIC = TextEditingController(text: "${data?["NRIC"]}");
-        var VaccineStatus =
-            TextEditingController(text: "${data?["isVaccine"]}");
+        var VaccineStatus = TextEditingController(
+            text:
+                "${data?["isVaccine"] == false ? 'Unvaccinated' : 'Fully Vaccinated'}");
 
         return Center(
           child: Column(
@@ -175,6 +176,7 @@ class ProfileStream extends StatelessWidget {
                 height: 10,
               ),
               RoundedButton(
+                color: Colors.blue,
                 label: 'Save',
                 icon: Icons.save,
                 onPressed: () {

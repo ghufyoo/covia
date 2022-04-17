@@ -9,7 +9,8 @@ class InOut {
   final String storename;
   final String date;
   final String riskstatus;
-  final String username;
+  final String userfullname;
+  final bool uservaccinestatus;
 
   InOut(
       {required this.docId,
@@ -22,7 +23,8 @@ class InOut {
       required this.storename,
       required this.date,
       required this.riskstatus,
-      required this.username});
+      required this.userfullname,
+      required this.uservaccinestatus});
 
   Map<String, dynamic> toJson() => {
         'docId': docId,
@@ -35,7 +37,8 @@ class InOut {
         'storename': storename,
         'isOut': isOut,
         'riskstatus': riskstatus,
-        'username': username
+        'userfullname': userfullname,
+        'uservaccinestatus': uservaccinestatus
       };
   static InOut fromJson(Map<String, dynamic> json) => InOut(
       docId: json['docId'],
@@ -48,5 +51,7 @@ class InOut {
       storename: json['storename'],
       isOut: json['isOut'],
       riskstatus: json['riskstatus'],
-      username: json['username']);
+      userfullname: json['userfullname'],
+      uservaccinestatus: json['uservaccinestatus']
+      );
 }

@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:covia/controller/firestore_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Highrisk_Screen extends StatefulWidget {
   const Highrisk_Screen({Key? key}) : super(key: key);
@@ -8,6 +11,8 @@ class Highrisk_Screen extends StatefulWidget {
 }
 
 class _Highrisk_ScreenState extends State<Highrisk_Screen> {
+  late QuerySnapshot snapshotData;
+  bool isExecuted = false;
   final state = [
     'Johor',
     'Kedah',
@@ -48,19 +53,37 @@ class _Highrisk_ScreenState extends State<Highrisk_Screen> {
                     ),
                   ),
                   padding: EdgeInsets.all(10),
-                  child: DropdownButton<String>(
-                    value: value,
-                    onChanged: ((value) => setState(() {
-                          this.value = value;
-                          print(value);
-                        })),
-                    items: state.map(buildMenuItem).toList(),
-                    hint: Text("Select state"),
-                    elevation: 8,
-                    isExpanded: true,
-                  ),
+                  child: GetBuilder<FirestoreController>(
+                      init: FirestoreController(), // pause here
+                      builder: (context) {
+                        return DropdownButton<String>(
+                          value: value,
+                          onChanged: ((value) {
+                            this.value = value;
+                            print(value);
+                            context
+                                .dropdownData(value.toString())
+                                .then((value) {
+                              snapshotData = value;
+                              setState(() {
+                                isExecuted = true;
+                              });
+                            });
+                          }),
+                          items: state.map(buildMenuItem).toList(),
+                          hint: Text("Select state"),
+                          elevation: 8,
+                          isExpanded: true,
+                        );
+                      }),
                 ),
               ),
+              isExecuted
+                  ? selectedData()
+                  : Container(
+                      child:
+                          const Text('Choose the state that you want to check'),
+                    )
             ],
           ),
         ));
@@ -73,6 +96,72 @@ class _Highrisk_ScreenState extends State<Highrisk_Screen> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
       );
+
+  Widget selectedData() {
+    Color color(num cases) {
+      Color col;
+      if (cases <= 5) {
+        col = Colors.green;
+        return col;
+      } else if (cases > 5 && cases <= 25) {
+        col = Colors.yellow.shade700;
+        return col;
+      } else {
+        col = Colors.red;
+        return col;
+      }
+    }
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 10,
+        ),
+        Center(
+          child: Text(
+            'Please avoid these areas if possible until further notice 5 high-risk areas in $value as of 1st April 2022',
+            textAlign: TextAlign.center,
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        SizedBox(
+          height: 300,
+          child: ListView.builder(
+            itemCount: snapshotData.docs.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+            
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  tileColor: color(snapshotData.docs[index]['cases']),
+                  title: Text(
+                    snapshotData.docs[index]['district'],
+                    style: TextStyle(fontSize: 25),
+                    textAlign: TextAlign.center,
+                  ),
+                  subtitle: Text(
+                    '${snapshotData.docs[index]['cases']} reported positive cases',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  onTap: () {
+                    // Get.to(() => DetailCrowdCheckerScreen(
+                    //     storename: snapshotData.docs[index]['storename'].toString(),
+                    //     riskstatus: snapshotData.docs[index]['riskstatus'],
+                    //     activeuser: snapshotData.docs[index]['activeuser']));
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }
 //nanti pakai
 // class HighRiskStream extends StatelessWidget {
