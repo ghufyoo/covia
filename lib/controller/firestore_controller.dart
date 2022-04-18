@@ -111,7 +111,7 @@ class FirestoreController extends GetxController {
           date: date,
           isOut: false,
           duration: '',
-          isReachedLimit: isReachedLimit,
+         isReachedLimit: isReachedLimit,
           outTime: '',
           storename: storename,
           riskstatus: riskstatus,
