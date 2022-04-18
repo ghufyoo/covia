@@ -30,7 +30,7 @@ class Home_Screen extends StatefulWidget {
       : super(key: key);
   String? storeName = '';
   String? storeEmail = '';
-  String? docId = '';
+  String? docId = '1';
   num? timeLimitHours = 0;
   num? timeLimitMinutes = 0;
   num? timeLimitSeconds = 0;
@@ -49,12 +49,12 @@ class _Home_ScreenState extends State<Home_Screen> {
   Duration duration = const Duration();
   Timer? timer;
   bool isExceeded = false;
-  void fetchData() async {
+  bool limit = false;
+  void isLimit() async {
     var data = await FirebaseFirestore.instance
         .collection("InOut")
         .doc(widget.docId)
-        .get();
-    isExceeded = data['isReachedLimit'];
+        .update({'isReachedLimit': true});
   }
 
   @override
@@ -62,7 +62,9 @@ class _Home_ScreenState extends State<Home_Screen> {
     // TODO: implement initState
     super.initState();
     startTimer(widget.startTimer);
-    fetchData();
+    //isLimit();
+
+    //fetchData();
     // if (isReachLimit) {
     //   SchedulerBinding.instance?.addPostFrameCallback((_) {
     //     Get.defaultDialog(title: 'yy');
@@ -117,6 +119,12 @@ class _Home_ScreenState extends State<Home_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      //isLimit();
+    });
+    // if (limit) {
+    //   print('object');
+    // }
     String username = '';
     bool uservaccinestatus = false;
     DateTime now = DateTime.now();
@@ -267,7 +275,6 @@ class _Home_ScreenState extends State<Home_Screen> {
                           label: 'Check-in',
                           icon: Icons.arrow_forward,
                           onPressed: () async {
-                            
                             await FirestoreController.instance.firebaseFirestore
                                 .collection('InOut')
                                 .get()
@@ -280,7 +287,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                                 }
                               }
                             });
-                            fetchData();
+                            // fetchData();
                             Get.to(QrscannerScreen(
                               docId: docId,
                               username: username,
@@ -310,7 +317,7 @@ class _Home_ScreenState extends State<Home_Screen> {
     if ((duration.inHours >= widget.timeLimitHours!.toInt()) &&
         (duration.inMinutes >= widget.timeLimitMinutes!.toInt()) &&
         (duration.inSeconds >= widget.timeLimitSeconds!.toInt())) {
-      //isExceeded = true;
+      isLimit();
       return Text(
         '$hours:$minutes:$seconds',
         style: const TextStyle(fontSize: 25, color: Colors.red),

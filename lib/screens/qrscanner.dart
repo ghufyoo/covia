@@ -1,31 +1,32 @@
-import 'dart:io';
+// Qr Scanner File
+
+import 'dart:io'; 
 import 'package:covia/controller/firestore_controller.dart';
 import 'package:covia/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart';                               
 import 'package:intl/intl.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';         
 
 class QrscannerScreen extends StatefulWidget {
   const QrscannerScreen({Key? key, required this.docId, required this.username, required this.uservaccinestatus})
       : super(key: key);
   final num docId;
   final String username;
-  final bool uservaccinestatus;
+  final bool uservaccinestatus;  //declare cariab
   @override
   State<QrscannerScreen> createState() => _QrscannerScreenState();
 }
 
-//var formatterTime = DateFormat('kk:mm');
-//String time = formatterTime.format(now);
+
 
 class _QrscannerScreenState extends State<QrscannerScreen> {
   final qrKey = GlobalKey(debugLabel: 'QR');
-  Barcode? barcode;
-  String c = '';
-  num activeuser = 0;
+  Barcode? barcode; //barcode variable for qr code
+ // String c = '';  //
+ // num activeuser = 0;
   QRViewController? controller;
-  int time = DateTime.now().millisecondsSinceEpoch;
+ // int time = DateTime.now().millisecondsSinceEpoch;
   DateTime now = DateTime.now();
 
   // void getData() async {
@@ -70,7 +71,7 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_new),
             onPressed: () {
-              Get.off(() => Home_Screen());
+              Get.off(() => Home_Screen());   //navigate to home screen
             },
           ),
         ),

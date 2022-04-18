@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:covia/controller/auth_controller.dart';
 import 'package:covia/controller/firestore_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,6 +35,7 @@ class HistoryStream extends StatelessWidget {
         stream: FirestoreController.instance.firebaseFirestore
             .collection('InOut')
             .where('isOut', isEqualTo: true)
+            .where('email', isEqualTo: AuthController().auth.currentUser!.email)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -58,15 +60,15 @@ class HistoryStream extends StatelessWidget {
             final uservaccinestatus = dat.get('uservaccinestatus');
 
             final historyBubble = HistoryUi(
-                date: date,
-                storename: storename,
-                checkin: checkIn,
-                checkout: checkOut,
-                duration: duration,
-                riskstatus: riskstatus,
-                userfullname: userfullname,
-                uservaccinestatus: uservaccinestatus,
-                );
+              date: date,
+              storename: storename,
+              checkin: checkIn,
+              checkout: checkOut,
+              duration: duration,
+              riskstatus: riskstatus,
+              userfullname: userfullname,
+              uservaccinestatus: uservaccinestatus,
+            );
 
             history.add(historyBubble);
           }
@@ -89,8 +91,7 @@ class HistoryUi extends StatefulWidget {
       required this.duration,
       required this.riskstatus,
       required this.userfullname,
-      required this.uservaccinestatus
-      })
+      required this.uservaccinestatus})
       : super(key: key);
   final String date;
   final String storename;
@@ -110,10 +111,10 @@ class _HistoryUiState extends State<HistoryUi> {
   Widget build(BuildContext context) {
     Color color(String riskstatus) {
       Color col;
-      if (riskstatus == 'Normal') {
+      if (riskstatus == 'Low Risk') {
         col = Colors.green;
         return col;
-      } else if (riskstatus == 'Moderate') {
+      } else if (riskstatus == 'Medium Risk') {
         col = Colors.yellow.shade700;
         return col;
       } else {
@@ -126,7 +127,12 @@ class _HistoryUiState extends State<HistoryUi> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         InkWell(
-           onTap: (() => Get.to(()=> DetailedHistoryScreen(userfullname: widget.userfullname, uservaccinestatus: widget.uservaccinestatus, checkin: widget.checkin, checkout: widget.checkout, duration: widget.duration))),
+          onTap: (() => Get.to(() => DetailedHistoryScreen(
+              userfullname: widget.userfullname,
+              uservaccinestatus: widget.uservaccinestatus,
+              checkin: widget.checkin,
+              checkout: widget.checkout,
+              duration: widget.duration))),
           child: Container(
             padding: EdgeInsets.only(top: 10.0),
             width: MediaQuery.of(context).size.width,

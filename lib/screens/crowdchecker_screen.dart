@@ -37,7 +37,7 @@ class _Crowdchecker_ScreenState extends State<Crowdchecker_Screen> {
                         textCapitalization: TextCapitalization.characters,
                         style: const TextStyle(color: Colors.black),
                         decoration: const InputDecoration(
-                            hintText: 'Search Courses',
+                            hintText: 'Search Place',
                             hintStyle: TextStyle(color: Colors.black)),
                         controller: searchController,
                       ),
