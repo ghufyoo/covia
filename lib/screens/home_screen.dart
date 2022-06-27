@@ -9,6 +9,7 @@ import 'package:covia/screens/highrisk_screen.dart';
 import 'package:covia/screens/history_screen.dart';
 import 'package:covia/screens/profile_screen.dart';
 import 'package:covia/screens/qrscanner.dart';
+
 import 'package:covia/screens/version_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -135,6 +136,7 @@ class _Home_ScreenState extends State<Home_Screen> {
     String outTime = DateFormat.Hm().format(now);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: InkWell(
           child: const Text('CovIA'),
@@ -182,6 +184,8 @@ class _Home_ScreenState extends State<Home_Screen> {
                           color2: Colors.pink[100]!,
                           onPressed: () {
                             Get.to(() => const Profile_Screen());
+                          
+                           
                           },
                           icon: Icons.person,
                           label: 'Profile'),

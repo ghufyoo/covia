@@ -103,6 +103,7 @@ class FirestoreController extends GetxController {
                 durationMinutes = value.data()?['durationMinutes'],
                 durationSeconds = value.data()?['durationSeconds'],
               });
+             
       totaluser = activeuser + 1; // add active user
       final session = InOut(
           docId: docId,
